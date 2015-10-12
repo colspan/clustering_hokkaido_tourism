@@ -42,4 +42,4 @@ labels = kmeans_model.labels_
 with open('data/cluster_%s_2012.csv' % clustering_target, 'w') as out_file:
     print >> out_file, 'cluster,commune'
     for commune, label in zip (stat_sum.keys(), labels):
-        print >> out_file, ','.join([label,commune])
+        print >> out_file, ','.join([str(label),str(commune)])
