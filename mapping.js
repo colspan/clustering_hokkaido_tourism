@@ -4,7 +4,7 @@
   var csv_files = [];
   var json_files = [];
   var tourism_stat_files = [
-    {file:"data/cluster_external_2012.csv", label:'cluster_external_2012'}
+    {file:"data/cluster_result.csv", label:'cluster_external_2012'}
   ];
   csv_files = csv_files.concat(tourism_stat_files);
   var geodata_files = [{file:"data/hokkaido_topo.json", label:'geodata_topo'}];

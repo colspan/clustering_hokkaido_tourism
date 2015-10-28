@@ -39,7 +39,7 @@ kmeans_model = KMeans(n_clusters=12, random_state=10).fit(features)
 # 分類先となったラベルを取得する
 labels = kmeans_model.labels_
 
-with open('data/cluster_%s_2012.csv' % clustering_target, 'w') as out_file:
+with open('data/cluster_result.csv', 'w') as out_file:
     print >> out_file, 'cluster,commune'
     for commune, label in zip (stat_sum.keys(), labels):
         print >> out_file, ','.join([str(label),str(commune)])
