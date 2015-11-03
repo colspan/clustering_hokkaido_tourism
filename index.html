@@ -2,17 +2,29 @@
 <meta charset="utf-8">
 <head>
 <title>Clustering Hokkaido Tourism Statistics</title>
+<style>
+  @import url(http://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
+</style>
+<script src="js/jquery-2.1.4.min.js"></script>
 <script src="js/queue.v1.min.js"></script>
 <script src="js/d3.v3.min.js"></script>
+<script src="js/nv.d3.min.js"></script>
 <script src="js/topojson.min.js"></script>
+<script src="js/bootstrap-table.min.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/bootstrap-table.min.css">
+<link rel="stylesheet" href="css/nv.d3.min.css">
 <style>
 body {
+  font-family: 'Noto Sans Japanese', sans-serif;
 }
 </style>
 </head>
 <body>
-
-<div id="map"></div>
+<div class="container">
+  <div id="heatmap"></div>
+  <div id="cluster_summaries"></div>
+</div>
 
 <script src="mapping.js"></script>
 </body>
