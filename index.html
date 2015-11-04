@@ -18,13 +18,47 @@
 body {
   font-family: 'Noto Sans Japanese', sans-serif;
 }
+.footer {
+  width: 100%;
+  background-color: #f5f5f5;
+  font-size:9pt;
+}
 </style>
 </head>
 <body>
 <div class="container">
-  <div id="heatmap"></div>
-  <div id="cluster_summaries"></div>
+  <div class="page-header">
+    <h1>北海道観光客統計データ <small>クラスタリング解析</small></h1>
+  </div>
+  <div class="row">
+    <div class="col-md-8" id="heatmap"></div>
+    <div class="col-md-4">
+      <div class="list-group" id="legend">
+      </div>
+    </div>
+  </div>
+  <div id="cluster_details"></div>
 </div>
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <p class="text-muted">
+          <img src="http://www.pref.hokkaido.lg.jp/image.jsp?id=777464"><br>
+          「北海道観光客統計データ クラスタリング解析」は以下の著作物を改変して利用しています。<br>
+          <a href="http://www.pref.hokkaido.lg.jp/kz/kkd/irikomi.htm">北海道経済部観光局 北海道観光入込客数調査報告書</a>,<br>
+          北海道・三好邦彦(<a href="http://twitter.com/colspan">@colspan</a>),<br>
+          クリエイティブ・コモンズ・ライセンス 表示2.1 日本
+        </p>
+      </div>
+      <div class="col-md-6">
+        その他データ出典
+        <ul>
+          <li><a hreF="http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03.html">国土数値情報　行政区域データ</a></li>
+        </ul>
+      </div>
+  </div>
+</footer>
 
 <script src="mapping.js"></script>
 </body>

@@ -32,6 +32,7 @@
   var target_datatype = 'external';
   // 色マップ
   var colors = d3.scale.category20();
+  var geodata;
 
   // 読み込み実行
   var q = queue();
@@ -52,13 +53,13 @@
       loaded[q_labels[i]] = data[i];
     }
     // 初期化
-    var geodata = topojson.feature(loaded.geodata_topo, loaded.geodata_topo.objects.hokkaido)
-    modify_data(geodata, loaded);
-    generate_heatmap(geodata, loaded);
-    generate_cluster_summaries(loaded);
+    geodata = topojson.feature(loaded.geodata_topo, loaded.geodata_topo.objects.hokkaido)
+    modify_data(loaded);
+    generate_summary(loaded);
+    generate_cluster_details(loaded);
   }
 
-  function modify_data(geodata, loaded){
+  function modify_data(loaded){
     // 札幌市を修正
     for(var i=0;i<geodata.features.length;i++){
       var commune;
@@ -80,32 +81,40 @@
   }
 
   // 描画
-  function generate_heatmap(json, loaded){
+  function draw_heatmap(loaded, target_elem_id, target_cluster){
     var projection, path;
 
     // svg要素を作成し、データの受け皿となるg要素を追加している
-    var map = d3.select('#heatmap').append('svg')
+    var map = d3.select(target_elem_id).append('svg')
     .attr('width', width)
     .attr('height', height)
+    .style('margin','0 auto')
+    .style('display', 'block')
     .append('g');
-
     // 投影関数
     projection = d3.geo.mercator()
     .scale(4800)
-    .center(d3.geo.centroid(json))  // データから中心点を計算
+    .center(d3.geo.centroid(geodata))  // データから中心点を計算
     .translate([width / 2, height / 2]);
 
     // Path Generator
     path = d3.geo.path().projection(projection);
     map.selectAll('path')
-    .data(json.features)
+    .data(geodata.features)
     .enter()
     .append('path')
     .attr('d', path)
     .attr("fill", function(d){
-      if( loaded.commune_to_cluster[d.commune] === undefined ) color = '#000';
-      else color = colors(loaded.commune_to_cluster[d.commune]);
-      return color;
+      if(target_cluster === undefined){
+        if( loaded.commune_to_cluster[d.commune] === undefined ) color = '#fff';
+        else color = colors(loaded.commune_to_cluster[d.commune]);
+        return color;
+      }
+      else{
+        if( loaded.commune_to_cluster[d.commune] === target_cluster ) color = colors(loaded.commune_to_cluster[d.commune]);
+        else color = '#fff';
+        return color;
+      }
     })
     .attr("stroke","hsl(80,100%,0%)" )
     .attr("stroke-width","0.3")
@@ -116,9 +125,25 @@
       // do nothing
     });
   }
-  function generate_cluster_summaries(loaded){
+  function get_elem_id(cluster_index){
+    return 'cluster_'+target_datatype+'_'+cluster_index;
+  }
+
+  function generate_summary(loaded){
+    draw_heatmap(loaded, '#heatmap');
+    // 凡例描画
+    d3.select('#legend').selectAll('a').data(Clusters)
+    .enter()
+    .append('a')
+    .attr('class', 'list-group-item')
+    .attr('href', function(d){return '#'+get_elem_id(d.index)+'_header'})
+    .style('background-color', function(d){return colors(d.index)})
+    .style('color','#fff')
+    .text(function(d){return d.title});
+  }
+  function generate_cluster_details(loaded){
     //データ集計
-    var root_elem_id = '#cluster_summaries';
+    var root_elem_id = '#cluster_details';
     var root_elem = d3.select(root_elem_id);
     var nested_data = d3.nest()
     .key(function(d){ return d.datatype; })
@@ -139,13 +164,15 @@
       var container_elem = root_elem.append('div');
       container_elem.attr('class', 'panel panel-default');
       var cluster_elem = container_elem.append('div');
-      var elem_id = 'cluster_'+target_datatype+'_'+cluster_index;
+      var elem_id = get_elem_id(cluster_index);
       cluster_elem.attr('id', elem_id);
       cluster_elem.attr('class', 'panel-body');
-      // ヘッダ
-      var title_elem = $('<div class="panel-heading"><h2 class="panel-title">'+cluster_title+' <span class="label label-default" style="background-color:'+colors(cluster_index)+'">Cluster Number : '+cluster_index+'</span></h2></div>');
-      $('#'+elem_id).before(title_elem);
       var communes = target_data[cluster_index];
+      // ヘッダ
+      var title_elem = $('<div class="panel-heading" id="'+elem_id+'_header"><h2 class="panel-title">'+cluster_title+' <span class="label label-default" style="background-color:'+colors(cluster_index)+'">市町村数 : '+Object.keys(communes).length+'</span></h2></div>');
+      $('#'+elem_id).before(title_elem);
+      //ヒートマップ生成
+      draw_heatmap(loaded, '#'+elem_id, cluster_index);
       //グラフ生成
       var plot_data = [];
       for(var commune in communes){
